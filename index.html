@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>WhatsApp Style Bottom Nav avec Toolbar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+'
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <link rel="stylesheet" href="../icons/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashList.css">
+  <link rel="stylesheet" href="css/dashvisite.css">
+
+
+ 
+</head>
+<body>
+
+<div id="saveModal" style="display:none; position:fixed; top:30%; left:10%; right:10%; background:white; padding:20px; border:1px solid #ccc; z-index:9999; border-radius:8px;">
+  <h3>Sauvegarder les pages</h3>
+  
+  <input type="text" id="noteTitle" placeholder="Titre de la note" style="width:100%; margin-bottom:10px; padding:5px;" />
+  
+  <!-- Select katab disponib yo -->
+  <select id="folderSelect" style="width:100%; margin-bottom:10px; padding:5px;" onchange="selectFolderName(this)">
+    <option value="">📁 Chwazi yon katab</option>
+    <!-- Options yo ap ajoute otomatikman -->
+  </select>
+  
+  <input type="text" id="folderName" placeholder="Nom du dossier" style="width:100%; margin-bottom:10px; padding:5px;" />
+  
+  <button onclick="saveAllPages()">Enregistrer</button>
+  <button onclick="document.getElementById('saveModal').style.display='none'">Annuler</button>
+</div>
+      
+      <div id="emojiPicker" style="display:none; position: fixed; top: 90px; left: 10px; background: white; border: 1px solid #ccc; padding: 8px; border-radius: 5px; max-width: 320px; max-height: 200px; overflow: hidden; z-index: 4000; font-size: 20px;">
+  
+        <!-- Bouton kategori -->
+        <div id="emojiCategories" style="display:flex; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">
+          <button class="catBtn active" data-cat="smileys">😀</button>
+          <button class="catBtn" data-cat="animals">🐶</button>
+          <button class="catBtn" data-cat="food">🍎</button>
+          <button class="catBtn" data-cat="activities">⚽</button>
+          <button class="catBtn" data-cat="objects">💡</button>
+        </div>
+        
+        <!-- Zòn emoji -->
+        <div id="emojiList" style="height: 140px; overflow-y: auto; user-select: none;">
+          <!-- Emoji yo ap parèt isit la -->
+        </div>
+      </div>
+      
+      
+  <div class="toolbar" id="toolbar">
+    <div class="btntool">
+        <button type="button" title="Aligner à gauche" data-cmd="justifyLeft"><i class="fas fa-align-left"></i></button>
+        <button type="button" title="Centrer" data-cmd="justifyCenter"><i class="fas fa-align-center"></i></button>
+        <button type="button" title="Aligner à droite" data-cmd="justifyRight"><i class="fas fa-align-right"></i></button>
+        <button type="button" title="Justifier" data-cmd="justifyFull"><i class="fas fa-align-justify"></i></button>
+        <button type="button" title="Gras" data-cmd="bold"><i class="fas fa-bold"></i></button>
+    <button type="button" title="Italic" data-cmd="italic"><i class="fas fa-italic"></i></button>
+
+    <!-- Lists -->
+    <button type="button" title="Liste à puces" data-cmd="insertUnorderedList"><i class="fas fa-list-ul"></i></button>
+    <button type="button" title="Liste numérotée" data-cmd="insertOrderedList"><i class="fas fa-list-ol"></i></button>
+    <button type="button" id="emojiBtn" title="Insérer emoji">😊</button>
+    
+    <button onclick="toggleEditable()">D</button>
+    
+    <input type="file" accept="image/*" onchange="insertLocalImage(this)" style="display:none;" />
+<button onclick="this.previousElementSibling.click()" title="Insérer une image locale">📷</button>
+
+    <button onclick="openSaveDialog()" title="Sauvegarder toutes les pages"><i class="fas fa-save"></i></button>
+    
+    <button onclick="exportAllPagesToPDF()" style="margin: 10px;">📄</button>
+
+    </div>
+    
+    <div class="selectInput">
+            <!-- Font size -->
+    <select id="fontSize" title="Taille de la police">
+        <option value="">Taille</option>
+        <option value="1">8pt</option>
+        <option value="2">10pt</option>
+        <option value="3">12pt</option>
+        <option value="4">14pt</option>
+        <option value="5">18pt</option>
+        <option value="6">24pt</option>
+        <option value="7">36pt</option>
+      </select>
+  
+      <!-- Font family -->
+      <select id="fontFamily" title="Police">
+        <option value="">Police</option>
+        <option value="Arial">Arial</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Tahoma">Tahoma</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Verdana">Verdana</option>
+      </select>
+  
+      <!-- Color -->
+      <input type="color" id="fontColor" title="Couleur du texte" />
+    
+      
+    </div>
+   
+
+    <!-- Bold / Italic -->
+      </div>
+
+  <div class="content active" id="accueil">
+    <input type="text" id="categorySearch" placeholder="🔍 Rechèch kategori..." style="width: 100%; padding: 10px; margin-bottom: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc;">
+  <main class="page1">
+  <button id="deleteSelected">🗑️ Efase sa ki make yo</button>
+  <h2>Chwazi yon kategori Firebase:</h2>
+  <div id="categories" style="display: block;"></div>
+
+  <div class="data">Chwazi yon kategori pou wè lis atik yo...</div>
+  
+  <div id="container"></div>
+  
+</main>
+  </div>
+
+  <div class="content note" id="note">
+    <div id="pagesContainer">
+      <!-- Pages added dynamically -->
+    </div>
+  </div>
+
+  <div class="content" id="list">
+    <h2>Mes notes sauvegardées</h2>
+    <div id="savedNotesList"></div>
+  </div>
+  
+  <div class="content" id="visite">
+  <h1>Dashboard Vizit Paj Avanse</h1>
+
+<div class="filters">
+  <div class="field">
+    <label for="">Start</label>
+    <input type="date" id="startDate" placeholder="start"/>
+  </div>
+  <div class="field">
+    <label for="">End</label>
+    <input type="date" id="endDate" placeholder="end" />
+  </div><br>
+</div>
+
+  <div class="buttons">
+    <button id="filterBtn">
+      <i class="fas fa-filter"></i> Filtre
+    </button>
+    <button id="resetBtn">
+      <i class="fas fa-redo"></i> Reyajiste
+    </button>
+  </div>
+
+<h2>Estatistik Paj</h2>
+<div style="margin-top: 10px;">
+  <button id="deleteSelected">
+    <i class="fas fa-trash"></i> Siprime Chwa yo
+  </button>
+</div>
+<div class="table-container">
+  <table id="statsTable">
+    <thead>
+      <tr>
+        <th><input type="checkbox" id="selectAll"></th>
+        <th>Paj</th>
+        <th>T.V</th>
+        <th>II
+          <button id="toggleExtraCols" title="Montre / Kache lòt kolòn">▶</button>
+        </th>
+        <th class="extra-column">IP</th>
+        <th class="extra-column">Peyi</th>
+        <th class="extra-column">Rejyon</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+  <h2>Grafik Paj ki Pi Vizite</h2>
+  <canvas id="pageVisitsChart"></canvas>
+
+  <h2>Estatistik Navigatè</h2>
+  <canvas id="browserChart"></canvas>
+
+  <h2>Estatistik Aparèy</h2>
+  <canvas id="deviceChart"></canvas>
+
+
+  </div>
+  
+  <div class="content" id="sondage">
+    <div class="poll-form">
+  <h2>Nouvo Sondaj</h2>
+  <div class="input"><input type="text" id="question" placeholder="Tit sondaj la"></div>
+  <div class="input"><input type="text" id="option1" placeholder="Opsyon 1"></div>
+  <div class="input"><input type="text" id="option2" placeholder="Opsyon 2"></div>
+  <button type="button" onclick="addOption()">➕ Ajoute Opsyon</button>
+  <button onclick="savePoll()">💾 Sove Lokalman</button>
+</div>
+
+<div class="poll-list">
+  <h2>📂 Tout Sondaj</h2>
+  <div id="pollContainer"></div>
+</div>
+  </div>
+  
+<div class="content html" id="html" style="display: none;">
+  <div class="htmlPage">
+    <span class="close-btn" onclick="closeHtmlModal()">&times;</span>
+    <div id="htmlContentOutput" style="margin-top: 40px;"></div>
+  </div>
+</div>
+
+  <nav class="bottom-nav">
+    <a href="#" class="active" onclick="switchTab('accueil', this)">
+      <div class="icon">🏠</div> <!-- Kay pou 'Akey' -->
+      <span>Akey</span>
+    </a>
+    
+      <a href="#" onclick="switchTab('visite', this)">
+    <div class="icon">📝</div> <!-- Papye ak plim pou 'Notes' -->
+    <span>Visites</span>
+  </a>
+    
+    <a href="#" onclick="switchTab('note', this)">
+      <div class="icon">📝</div> <!-- Papye ak plim pou 'Notes' -->
+      <span>Notes</span>
+    </a>
+    <a href="#" onclick="switchTab('list', this)">
+      <div class="icon">📋</div> <!-- Lis oswa clipboard pou 'Liste' -->
+      <span>Liste</span>
+    </a>
+    
+    
+      <a href="#" onclick="switchTab('sondage', this)">
+    <div class="icon">📋</div> <!-- Lis oswa clipboard pou 'Liste' -->
+    <span>Sondage</span>
+  </a>
+  </nav>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  
+  <script src="js/config.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/dashList.js"></script>
+  <script src="js/dashvisite.js"></script>
+  <script src="js/sondage.js"></script>
+
+
+
+
+  <script>
+  function toggleEditable() {
+  const pages = document.querySelectorAll('.page .editor');
+  
+  pages.forEach(page => {
+    const isEditable = page.getAttribute('contenteditable') === 'true';
+    page.setAttribute('contenteditable', !isEditable);
+  });
+}
+  
+  
+    // Page counter global
+    let pageCount = 0;
+
+    function switchTab(tabId, element) {
+      // Hide all content divs
+      document.querySelectorAll('.content').forEach(div => div.classList.remove('active'));
+
+      // Show selected tab content
+      document.getElementById(tabId).classList.add('active');
+
+      // Update active button
+      document.querySelectorAll('.bottom-nav a').forEach(a => a.classList.remove('active'));
+      element.classList.add('active');
+
+      // Show or hide toolbar only on note tab
+      const toolbar = document.getElementById('toolbar');
+      if (tabId === 'note') {
+        toolbar.style.display = 'flex';
+      } else {
+        toolbar.style.display = 'none';
+      }
+    }
+    
+function addPage(content = '', afterPage = null, audio = null, audioTitle = '') {
+  pageCount++;
+  const currentId = `page-${pageCount}`;
+  
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.setAttribute('id', currentId);
+  
+  page.innerHTML = `
+    <div class="editor-wrapper">
+      <div class="editor" contenteditable="true" spellcheck="false" style="text-align:left;">
+        ${content}
+      </div>
+      <div class="limit-bar"></div>
+    </div>
+    <div class="btns">
+      <button onclick="addPage('', this.closest('.page'))" title="Ajouter une page">➕</button>
+      <button onclick="whatsapp('', this.closest('.page'))" title="Partager WhatsApp">🟢</button>
+      <button onclick="facebook('', this.closest('.page'))" title="Partager Facebook">🔵</button>
+
+      <button onclick="startRecording(this)" title="Rekòde odyo">🎤</button>
+      <button onclick="downloadRecording(this)" title="Telechaje odyo">⬇️</button>
+      <button class="play-audio" onclick="playAudio(this)" title="Jwe odyo" style="display:none;">▶️</button>
+
+      <button onclick="twitter('', this.closest('.page'))" title="Partager Twitter">🐦</button>
+      <button onclick="showHtmlCode('${currentId}')" title="Voir code HTML">🔍</button>
+      <button class="delete" onclick="deletePage('${currentId}')" title="Supprimer la page">🗑️</button>
+      <span class="page-number">0/0</span>
+    </div>
+  `;
+  
+  const container = document.getElementById('pagesContainer');
+  if (afterPage && afterPage.parentNode === container) {
+    afterPage.insertAdjacentElement('afterend', page);
+  } else {
+    container.appendChild(page);
+  }
+  
+  // Mete odyo si li disponib
+  if (audio) {
+    page.dataset.audioBlob = audio;
+    page.dataset.audioTitle = audioTitle;
+    
+    const playBtn = page.querySelector('.play-audio');
+    if (playBtn) playBtn.style.display = 'inline-block';
+  }
+  
+  const editor = page.querySelector('.editor');
+  editor.focus();
+  
+  updatePageNumbers();
+}
+
+let currentRecorder = null;
+let currentChunks = [];
+
+function startRecording(button) {
+  const page = button.closest('.page');
+  const stopBtn = button;
+  
+  if (currentRecorder) {
+    alert("Yon lòt rekò ap fèt deja!");
+    return;
+  }
+  
+  navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+    currentChunks = [];
+    const recorder = new MediaRecorder(stream);
+    currentRecorder = recorder;
+    
+    recorder.ondataavailable = (e) => {
+      currentChunks.push(e.data);
+    };
+    
+    recorder.onstop = () => {
+      const blob = new Blob(currentChunks, { type: 'audio/webm' });
+      const audioUrl = URL.createObjectURL(blob);
+      const pageNumber = page.querySelector('.page-number')?.innerText || '0/0';
+      
+      page.dataset.audioBlob = audioUrl;
+      page.dataset.audioTitle = `Audio_Page_${pageNumber.replace('/', '-')}`;
+      
+      // Afiche bouton Play si gen odyo
+      const playBtn = page.querySelector('.play-audio');
+      if (playBtn) {
+        playBtn.style.display = 'inline-block';
+      }
+      
+      alert("✅ Rekò fini! Ou ka jwe oswa telechaje odyo a.");
+      currentRecorder = null;
+      currentChunks = [];
+    };
+    
+    recorder.start();
+    
+    stopBtn.innerText = '⏹️';
+    stopBtn.onclick = () => {
+      recorder.stop();
+      stream.getTracks().forEach(track => track.stop());
+      stopBtn.innerText = '🎤';
+      stopBtn.onclick = () => startRecording(stopBtn);
+    };
+  }).catch(err => {
+    alert("Erè pandan rekò: " + err.message);
+  });
+}
+function playAudio(button) {
+  const page = button.closest('.page');
+  const audioUrl = page.dataset.audioBlob;
+  
+  if (!audioUrl) {
+    alert("Pa gen odyo pou jwe.");
+    return;
+  }
+  
+  const audio = new Audio(audioUrl);
+  audio.play();
+}
+function stopRecording(button) {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    button.disabled = false;
+    button.innerText = "🎤"; // retounen bouton rekò
+    button.onclick = () => startRecording(button);
+  }
+}
+function downloadRecording(button) {
+  const page = button.closest('.page');
+  const audioUrl = page.dataset.audioBlob;
+  const audioTitle = page.dataset.audioTitle || 'audio';
+  
+  if (!audioUrl) {
+    alert("Pa gen odyo pou telechaje.");
+    return;
+  }
+  
+  const a = document.createElement('a');
+  a.href = audioUrl;
+  a.download = audioTitle + '.webm';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function showHtmlCode(pageId) {
+  const editor = document.querySelector(`#${pageId} .editor`);
+  if (!editor) {
+    alert("Editor pa jwenn pou pageId: " + pageId);
+    return;
+  }
+  
+  const htmlOutput = editor.innerHTML;
+  
+  // Ajoute so de liy apre chak baliz HTML
+  const formattedHtml = htmlOutput
+    .replace(/></g, '>\n<') // ajoute \n ant baliz kole yo
+    .replace(/</g, '\n<') // ajoute \n anvan tout baliz (opsyonèl)
+    .replace(/\n\n+/g, '\n'); // retire so de liy ki parèt 2-3 fwa
+  
+  const modal = document.querySelector(".html");
+  modal.style.display = "flex";
+  
+  const outputContainer = document.getElementById("htmlContentOutput");
+  outputContainer.textContent = formattedHtml.trim(); // pou montre kòd la egzakteman
+}
+
+function closeHtmlModal() {
+  document.querySelector(".html").style.display = "none";
+}
+
+
+
+function updatePageNumbers() {
+  const pages = document.querySelectorAll('.page');
+  const total = pages.length;
+  
+  pages.forEach((page, index) => {
+    const span = page.querySelector('.page-number');
+    if (span) {
+      span.textContent = `${index + 1}/${total}`;
+    }
+  });
+}
+    
+
+
+/**
+ * Convertit le contenu HTML d'un éditeur en texte formaté pour WhatsApp
+ * et le copie dans le presse-papiers.
+ * 
+ * @param {*} _ - Paramètre non utilisé (par convention).
+ * @param {Document} page - L'objet document ou un élément parent où se trouve l'éditeur.
+ */
+function whatsapp(_, page) {
+  const editor = page.querySelector('.editor');
+  if (!editor) {
+    console.error("L'éditeur avec la classe '.editor' n'a pas été trouvé.");
+    alert("Erreur : L'éditeur n'a pas été trouvé.");
+    return;
+  }
+  
+  let html = editor.innerHTML;
+  
+  // --- NOUVELLE STRATÉGIE ---
+  
+  // 1. Pré-traitement pour les sauts de ligne. C'est l'étape la plus importante.
+  // On s'assure que les éléments qui créent des sauts de ligne (blocs, <br>) sont bien convertis en '\n'.
+  html = html
+    // Convertir les sauts de ligne <br> en caractère de nouvelle ligne.
+    .replace(/<br\s*\/?>/gi, '\n')
+    // Ajouter un saut de ligne APRÈS les balises de bloc pour séparer le contenu.
+    .replace(/<\/(p|div|ul|h[1-6])>/gi, '\n')
+    // Transformer les <li> en tirets. On ajoute un saut de ligne avant pour bien les séparer.
+    .replace(/<li[^>]*>/gi, '\n- ');
+    
+    
+    
+  
+  // 2. Conversion du formatage (gras, italique).
+  // On fait cette étape AVANT de supprimer toutes les balises restantes.
+  let formatted = html
+    .replace(/<(b|strong)>(.*?)<\/\1>/gi, '*$2*') // Gras: *texte*
+    .replace(/<(i|em)>(.*?)<\/\1>/gi, '_$2_'); // Italique: _texte_
+  
+  // 3. Suppression de TOUTES les autres balises HTML.
+  // Maintenant que le formatage et les sauts de ligne sont gérés, on peut nettoyer sans risque.
+  formatted = formatted.replace(/<[^>]*>/g, '');
+  
+  // 4. Nettoyage final du texte.
+  formatted = formatted
+    // Remplacer 3 sauts de ligne ou plus par seulement 2 (pour garder un seul paragraphe vide max).
+    .replace(/\n{3,}/g, '\n\n')
+    // Supprimer les espaces et tabulations en début de ligne.
+    .replace(/\n[ \t]+/g, '\n')
+    // Supprimer les espaces inutiles autour des caractères de formatage.
+    .replace(/\s+([*_])/g, '$1') // espace avant * ou _
+    .replace(/([*_])\s+/g, '$1') // espace après * ou _
+    // Supprimer les espaces vides au début et à la fin du texte complet.
+    .trim();
+  
+  // 5. Copie dans le presse-papiers (votre code original était déjà bon ici).
+  navigator.clipboard.writeText(formatted)
+    .then(() => alert('Texte corrigé et copié avec le formatage WhatsApp !'))
+    .catch(err => console.error('Échec de la copie :', err));
+  
+  return formatted;
+}
+
+function facebook(_, page) {
+  const editor = page.querySelector('.editor');
+  let raw = editor.innerText.trim();
+  
+  // Titre + summary
+  const lines = raw.split('\n').filter(line => line.trim() !== '');
+  const title = lines[0] || 'Ma note';
+  const summary = lines.slice(1, 4).join(' ');
+  const image = ''; // Si ou mete image pi ta ou ka ajoute li la
+  
+  const fbText = `${title}\n\n${summary}\n\n#AyiWeb #Note #Inspiration @OpenAI`;
+  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(document.location.href)}&quote=${encodeURIComponent(fbText)}`;
+  window.open(url, '_blank');
+}
+
+function twitter(_, page) {
+  const editor = page.querySelector('.editor');
+  let raw = editor.innerText.trim();
+  
+  const lines = raw.split('\n').filter(line => line.trim() !== '');
+  const summary = lines.slice(0, 2).join(' ').slice(0, 220); // limite Twitter
+  const tweet = `${summary}... #AyiWeb #Notes @ChatGPT https://ayiweb.app`;
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweet)}`;
+  window.open(url, '_blank');
+}
+
+    // Delete a page by id
+    function deletePage(id) {
+      const page = document.getElementById(id);
+      if (page) {
+        page.remove();
+      }
+    }
+
+    // Toolbar button handling
+    document.getElementById('toolbar').addEventListener('click', e => {
+      const cmd = e.target.closest('button')?.dataset.cmd;
+      if (!cmd) return;
+      document.execCommand(cmd, false, null);
+    });
+
+    // Font size change
+    document.getElementById('fontSize').addEventListener('change', function () {
+      const size = this.value;
+      if (size) {
+        document.execCommand('fontSize', false, size);
+      }
+      this.value = '';
+    });
+
+    // Font family change
+    document.getElementById('fontFamily').addEventListener('change', function () {
+      const font = this.value;
+      if (font) {
+        document.execCommand('fontName', false, font);
+      }
+      this.value = '';
+    });
+
+    // Font color change
+    document.getElementById('fontColor').addEventListener('change', function () {
+      const color = this.value;
+      document.execCommand('foreColor', false, color);
+    });
+
+    // Initialize: hide toolbar by default (only show on "note" tab)
+    document.getElementById('toolbar').style.display = 'none';
+
+    // Add initial page on load
+    window.addEventListener('DOMContentLoaded', () => {
+      addPage('Commencez à écrire ici...');
+    });
+  </script>
+
+</body>
+</html>
