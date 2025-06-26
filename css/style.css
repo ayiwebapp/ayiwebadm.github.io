@@ -1,0 +1,561 @@
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: sans-serif;
+    background: #f1f1f1;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 1px;
+    text-align: center;
+    display: none;
+    width: 100%;
+    overflow-y: auto;
+    border: 0px solid gray;
+    background: white;
+    margin-bottom: 50px;
+  }
+
+  .note {
+    flex: 1;
+    padding: 1px;
+    text-align: center;
+    display: none;
+    position: absolute;
+    top: 90px; /* toolbar + header */
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    height: 79vh;
+    overflow-y: auto;
+    border: 1px solid gray;
+    background: white;
+  }
+
+  .content.active {
+    display: block;
+  }
+  
+  
+.content.html {
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.htmlPage {
+  background-color: white;
+  width: 90%;
+  max-width: 800px;
+  height: 80vh;
+  padding: 2px;
+  overflow-y: auto;
+  border-radius: 10px;
+  position: relative;
+  text-align: left;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+pre#htmlContentOutput {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+  .bottom-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #ffffff;
+    border-top: 1px solid #0c0c0c;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    height: 50px;
+  }
+
+  .bottom-nav a {
+    color: #888;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .bottom-nav a.active {
+    color: #25d366;
+  }
+
+  .icon {
+    font-size: 20px;
+  }
+
+  /* Toolbar styles */
+  .toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #fafafa;
+    border-bottom: 1px solid #ccc;
+    display:block;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 0 10px;
+    gap: 10px;
+    z-index: 20;
+    width: 100%;
+  }
+
+  .toolbar select,
+  .toolbar button,
+  .toolbar input[type="color"] {
+    font-size: 16px;
+    padding: 3px 6px;
+    cursor: pointer;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .toolbar select{
+      width: 80px;
+      height: 25px;
+  }
+
+  .toolbar button {
+    border: none;
+    background: none;
+    font-size: 18px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .toolbar button:hover {
+    background: #ddd;
+    border-radius: 4px;
+  }
+
+  .btntool{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 3px;
+    gap: 5px;
+  }
+  .btntool button{
+    border: 1px solid gray;
+  }
+  .selectInput{
+    display: flex;
+    justify-content: start;
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 5px;
+    margin-top: 0;
+    gap: 5px;
+  }
+  .selectInput select{
+    flex: 1;
+  }
+  
+#note .editor:focus {
+  outline: none;
+}
+
+#note .btns {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 5px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+#note .btns button {
+  
+  margin: 0 5px;
+  padding: 2px;
+  background: none;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#note .btns button.delete {
+  background: none;
+}
+
+@media screen and (max-width: 600px) {
+  #note .page {
+    min-height: 470px;
+    max-height: 500px;
+  }
+}
+  .btns {
+    margin-top: 6px;
+    text-align: right;
+  }
+
+  .btns button {
+    cursor: pointer;
+    margin-left: 5px;
+    padding: 3px 8px;
+    font-size: 14px;
+  }
+
+
+    
+  .toolbar button:hover {  
+    background: #ddd;  
+    border-radius: 4px;  
+  }#note .page {  
+    width: 100%;  
+    max-width: 105mm;  
+    
+    max-height: 450px;  
+    margin: 2px auto;  
+    background: white;  
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);  
+    position: relative;  
+    padding: 0;  
+    overflow: auto; /* Tèks ki depase ap koupe */  
+    display: flex;  
+    flex-direction: column;  
+    margin-bottom: 10px;
+  }  
+    
+  #note .editor {  
+    flex: 1;  
+    width: 100%;  
+    height: 85vh;  
+    border: none;  
+    padding: 2px;  
+   overflow-y: auto;
+    white-space: pre-wrap;  
+    word-break: break-word;  
+    text-align: left; 
+  }  
+  
+
+
+.editor-wrapper {
+  position: relative;
+  height: 80vh;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+
+
+.limit-bar {
+  position: relative;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: black;
+}
+
+
+    
+  #note .editor:focus {  
+    outline: none;  
+  }  
+    
+  #note .btns {  
+    display: flex;  
+    justify-content: space-between;  
+    width: 100%;  
+    margin-top: 5px;  
+    position: absolute;  
+    bottom: 0;  
+    left: 0;  
+  }  
+    
+  #note .btns button {  
+    
+    margin: 0 5px;  
+    padding: 2px;  
+    background: none;  
+    color: white;  
+    border: none;  
+    border-radius: 6px;  
+    cursor: pointer;  
+  }  
+    
+  #note .btns button.delete {  
+    background: none;  
+  }  
+    
+  @media screen and (max-width: 600px) {  
+    #note .page {  
+      height: auto;  
+      min-height: 78vh;
+    }  
+  }  
+    
+    
+    
+    
+    .dropdown {  
+      position: relative;  
+      display: inline-block;  
+      margin-top: 0;  
+      padding: 0;  
+      background-color: #4CAF50;  
+      height: auto;  
+        
+    }  
+      
+    .dropbtn {  
+      background-color: #4CAF50;  
+      color: white;  
+      padding: 10px 14px;  
+      font-size: 16px;  
+      border: none;  
+      cursor: pointer;  
+      border-radius: 6px;  
+    }  
+      
+    .dropdown-content {  
+      display: none;  
+      position: absolute;  
+      right: 15px;  
+      background-color: white;  
+      min-width: auto;  
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);  
+      z-index: 1;  
+      border-radius: 6px;  
+      overflow: hidden;  
+    }  
+      
+    .dropdown-content a {  
+      color: black;  
+      padding: 10px 12px;  
+      text-decoration: none;  
+      display: block;  
+    }  
+      
+    .dropdown-content a:hover {  
+      background-color: #f1f1f1;  
+    }  
+      
+    .dropdown:hover .dropdown-content {  
+      display: block;  
+    }  
+      
+    /* 👉 Seksyon Type */  
+    .type-section {  
+      border: 1px solid #ccc;  
+      border-radius: 10px;  
+      margin-bottom: 15px;  
+      padding: 10px;  
+      background-color: #fdfdfd;  
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);  
+    }
+  
+  
+  /* Konteyner prensipal pou lis nòt */
+#savedNotesList {
+  padding: 15px;
+  background: #fefefe;
+  border-top: 1px solid #ccc;
+  max-height: 80vh;
+  overflow-y: auto;
+  
+}
+  
+  /* Chak katab */
+  #savedNotesList h4 {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0;
+    height: 60px;
+    margin-top: 7px;
+    border-radius: 6px;
+    font-size: 16px;
+    flex: 1;
+    position: relative;
+  }
+  
+  /* Chak nòt nan katab la */
+  #savedNotesList div div {
+    margin: 2px 0;
+    padding: 1px;
+    border: 1px solid #ddd;
+    border-left: 5px solid #4CAF50;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  
+  /* Titre nòt yo */
+  #savedNotesList strong {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  /* Dat */
+  #savedNotesList small {
+    color: #888;
+    display: block;
+    margin: 4px 0;
+  }
+  
+  /* Bouton yo (voir, modifier, supprimer) */
+  #savedNotesList button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  #savedNotesList button:hover {
+    background-color: #388E3C;
+  }
+  
+  #savedNotesList button:last-child {
+    background-color: transparent;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+  
+  #savedNotesList button:last-child:hover {
+    background-color: #d32f2f;
+  }
+  
+
+  .folder-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .folder-header:hover {
+    background-color: #388E3C;
+  }
+  
+  .folder-notes {
+    padding: 10px;
+    background: #fdfdfd;
+    border-left: 4px solid #4CAF50;
+    margin-top: 5px;
+    border-radius: 4px;
+  }
+
+  .folder-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .folder-header:hover {
+    background-color: #388E3C;
+  }
+  
+  .folder-header .note-count {
+    font-weight: normal;
+    font-size: 14px;
+    margin-left: 6px;
+  }
+  
+  .delete-folder-btn {
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    background: none;
+    color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .delete-folder-btn:hover {
+    color: #ffaaaa;
+  }
+  
+  
+
+  .format-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0;
+    font-family: sans-serif;
+  }
+  
+  .format-dropdown select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .format-dropdown button {
+    padding: 6px 12px;
+    background-color: #0aaf64; /* koulè WhatsApp-like */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .format-dropdown button:hover {
+    background-color: #098a51;
+  }
+  
